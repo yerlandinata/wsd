@@ -2,10 +2,8 @@
 Yudhistira Erlandinata, et. al
 
 ## Setup
-- Download dataset from SCeLE
+- Download dataset from drive https://drive.google.com/drive/folders/1t-2ZHbGocvGdzGK_SqW5o4IGgDkxbt7U?usp=sharing
 - Install requirements from requirements.txt
-- Run Preprocessing.ipynb
-- Train with WSD.ipynb
 
 ## Progress so far
 ### Preprocessing
@@ -15,7 +13,10 @@ Yudhistira Erlandinata, et. al
 - Stemming
 - Numbers normalization
 - Money normalization
+- Passive/active voice verbs normalization
+- Too common part of speech normalization
 - Rare sense removal
+- POS tagging
 
 ### Feature Extraction
 - Bag of Words
@@ -38,4 +39,8 @@ Yudhistira Erlandinata, et. al
 - Macro Average F1-Score
 
 ### Best Approach
-It Makes Sense's local collocations SVD + Surrounding words SVD features with Linear SVM classifier, macro avg. accuarcy: .74, macro avg. f1-score: .533, cross-validated.
+Iacobacci, et. al (2010) replication: It makes sense + word embedding wikipedia
+
+# References
+All papers here:
+- https://drive.google.com/drive/folders/1t-2ZHbGocvGdzGK_SqW5o4IGgDkxbt7U?usp=sharing
