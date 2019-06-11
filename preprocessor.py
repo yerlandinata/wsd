@@ -3,7 +3,8 @@ from functools import reduce
 import string
 
 pipe = lambda *args: lambda x: reduce(lambda acc, f: f(acc), args, x)
-clean_word = lambda w: w.translate(str.maketrans('', '', string.punctuation)).lower() 
+remove_punctuation = lambda s: s.translate(str.maketrans('', '', string.punctuation))
+clean_word = lambda w: remove_punctuation(w).lower() 
 
 def normalize_money(s):
     s = s.replace('Rp ', 'Rp')
@@ -35,6 +36,58 @@ def normalize_number(s):
     while 'somenumber somenumber' in result:
         result = result.replace('somenumber somenumber', 'somenumber')
     return result
+
+PERSONAL_PRONOUNS = ['saya', 'aku', 'dia', 'mereka', 'anda', 'kamu', 'beliau', 'ia']
+
+def normalize_personal_pronoun(s):
+    return ' '.join([token if token not in PERSONAL_PRONOUNS else 'somepersonalpronoun' for token in s.split()])
+
+DEMONSTRATIVE_PRONOUNS = ['ini', 'itu', 'sini', 'situ']
+
+def normalize_demonstrative_pronoun(s):
+    return ' '.join([token if token not in DEMONSTRATIVE_PRONOUNS else 'somedemonstrativepronoun' for token in s.split()])
+
+COORDINATING_CONJUNCTIONS = ['dan', 'tetapi', 'atau']
+
+def normalize_coordinating_conjunction(s):
+    return ' '.join([token if token not in COORDINATING_CONJUNCTIONS else 'somecoordinatingconjunction' for token in s.split()])
+
+WEEKDAYS = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']
+
+def normalize_weekday(s):
+    return ' '.join([token if token not in WEEKDAYS else 'someweekday' for token in s.split()])
+
+MONTHS = ['januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember']
+
+def normalize_month(s):
+    return ' '.join([token if token not in MONTHS else 'somemonth' for token in s.split()])
+
+DETERMINERS = ['semua', 'beberapa', 'si', 'para', 'sang']
+
+def normalize_determiner(s):
+    return ' '.join([token if token not in DETERMINERS else 'somedeterminer' for token in s.split()])
+
+PREPOSITIONS = ['dengan', 'di', 'ke', 'oleh', 'pada', 'untuk']
+
+def normalize_preposition(s):
+    return ' '.join([token if token not in PREPOSITIONS else 'somepreposition' for token in s.split()])
+
+def create_obvious_verb_normalizer(annotated_words, exception_words):
+    return lambda s: ' '.join([
+        'someverb' if (
+            (stemmer.stem(clean_word(token)) not in {*annotated_words, *exception_words}) and
+            (token not in {*annotated_words, *exception_words}) and
+            len(token) > 5 and
+            token[0] in string.ascii_lowercase and
+            (token[:3] == 'ber' or token[:2] == 'di' or token[:2] == 'me')
+            and stemmer.stem(token)[:2] != 'di'
+            and stemmer.stem(token)[:2] != 'me'
+            and stemmer.stem(token)[:3] != 'ber' 
+        ) else token for token in s.split()
+    ])
+
+def remove_normalized(s):
+    return ' '.join([token for token in s.split() if 'some' not in token])
 
 stemmer = StemmerFactory().create_stemmer()
 
